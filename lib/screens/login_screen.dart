@@ -1,3 +1,4 @@
+import 'package:crypto_teste/screens/singup_screen.dart';
 import 'package:crypto_teste/screens/wallet_screen.dart';
 import 'package:crypto_teste/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,11 @@ class LoginScreen extends StatelessWidget {
                         backgroundColor: Colors.white,
                         shape: const StadiumBorder()
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const SingUpScreen())
+                        );
+                      },
                       child: const Text(
                         "Create an account",
                         style: TextStyle(
