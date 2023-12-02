@@ -1,5 +1,6 @@
 import 'package:crypto_teste/screens/login_screen.dart';
 import 'package:crypto_teste/screens/wallet_card_screen.dart';
+import 'package:crypto_teste/screens/wallet_my_account_screen.dart';
 import 'package:flutter/material.dart';
 
 class Wallet extends StatefulWidget {
@@ -37,6 +38,7 @@ class _WalletState extends State<Wallet> {
         ),
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 1, 57, 107),
@@ -88,6 +90,7 @@ class _WalletState extends State<Wallet> {
           backgroundColor: const Color.fromARGB(255, 0, 78, 146),
           type: BottomNavigationBarType.fixed,
           unselectedItemColor: Colors.white,
+          selectedItemColor: Colors.white,
           currentIndex: page!,
           onTap: (value) {
             pageController.animateToPage(
@@ -98,12 +101,12 @@ class _WalletState extends State<Wallet> {
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.wallet, color: Colors.white,),
-              label: "Wallet",
+              icon: Icon(Icons.home, color: Colors.white,),
+              label: "Market",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.line_axis, color: Colors.white,),
-              label: "",
+              icon: Icon(Icons.wallet, color: Colors.white,),
+              label: "Wallet",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person, color: Colors.white,),
@@ -127,18 +130,7 @@ class _WalletState extends State<Wallet> {
                 ),
               ),
             ),
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.red,
-                    Color.fromARGB(255, 0, 78, 146),
-                  ], 
-                ),
-              ),
-            ),   
+            const MyAccountScreen(),   
           ]
         ),
       ),
