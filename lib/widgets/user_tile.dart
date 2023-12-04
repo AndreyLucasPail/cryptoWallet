@@ -12,7 +12,7 @@ class UserTile extends StatelessWidget {
     return ListTile(
       title: Text(
         title!,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 20
         ),
@@ -20,7 +20,7 @@ class UserTile extends StatelessWidget {
       leading: leading,
       subtitle: Text(
         subtitle!,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 16,
         ),
