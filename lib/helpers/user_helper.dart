@@ -83,6 +83,37 @@ class UserHelper{
     }
   }
 
+  Future<int> deleteUser(int id) async {
+    Database? dbUser = await db;
+    return await dbUser!.delete(userTable, where: "$idColumn = ?", whereArgs: [id]);
+  }
+
+  Future<int?> updateUser(Users user) async {
+    Database? dbUser = await db;
+    return await dbUser!.update(
+      userTable, 
+      user.toMap(),
+      where: "$idColumn = ?",
+      whereArgs: [user.id],
+    );
+  }
+
+  Future<List> getAllUsers() async {
+    Database? dbUser = await db;
+
+    List listMap = await dbUser!.rawQuery("SELECT * FROM $userTable");
+    List<Users> listUsers = [];
+    for(Map m in listMap){
+      listUsers.add(Users.fromMap(m));
+    }
+    return listUsers;
+  }
+
+  Future close() async {
+    Database? dbUser = await db;
+    dbUser!.close();
+  }
+
 }
 
 class Users {

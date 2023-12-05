@@ -3,21 +3,29 @@ import 'package:crypto_teste/widgets/custom_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SingUpScreen extends StatelessWidget {
-  const SingUpScreen({super.key, this.emailController, this.addressController, 
-    this.passwordController, this.confirmPasswordController, this.nameController, this.phoneController, this.confirmEmailController, this.cityController, this.stateController, this.countryController});
+import '../helpers/user_helper.dart';
 
-  final TextEditingController? emailController;
-  final TextEditingController? confirmEmailController;
-  final TextEditingController? addressController;
-  final TextEditingController? passwordController;
-  final TextEditingController? confirmPasswordController;
-  final TextEditingController? nameController;
-  final TextEditingController? phoneController;
-  final TextEditingController? cityController;
-  final TextEditingController? stateController;
-  final TextEditingController? countryController;
- 
+class SingUpScreen extends StatefulWidget {
+  const SingUpScreen({super.key, this.users,});
+
+  final Users? users;
+
+  @override
+  State<SingUpScreen> createState() => _SingUpScreenState();
+}
+
+class _SingUpScreenState extends State<SingUpScreen> {
+
+  final emailController = TextEditingController();
+  final confirmEmailController = TextEditingController();
+  final addressController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final countryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +113,7 @@ class SingUpScreen extends StatelessWidget {
                   obscure: false,
                   hint: "Confirm Email",
                   validator: (text) {
-                    if(text!.isEmpty || confirmPasswordController!.text != emailController!.text){
+                    if(text!.isEmpty || confirmPasswordController.text != emailController.text){
                       return "E-mail invalid";
                     }else{
                       return "";
@@ -171,7 +179,7 @@ class SingUpScreen extends StatelessWidget {
                   obscure: false,
                   prefix: const Icon(Icons.lock),
                   validator: (text){
-                    if(text!.isEmpty || passwordController!.text.length != confirmPasswordController!.text.length){
+                    if(text!.isEmpty || passwordController.text.length != confirmPasswordController.text.length){
                       return "Ivalid password";
                     } else {
                       return "";
