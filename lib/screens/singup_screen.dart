@@ -1,3 +1,4 @@
+import 'package:crypto_teste/screens/login_screen.dart';
 import 'package:crypto_teste/screens/wallet_screen.dart';
 import 'package:crypto_teste/widgets/custom_textfield.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,13 +27,13 @@ class _SingUpScreenState extends State<SingUpScreen> {
   final countryController = TextEditingController();
   final birthdayController =TextEditingController();
 
-  Users? _users;
-  List<Users> userList = [];
   UserHelper helper = UserHelper();
 
   @override
   void initState() {
     super.initState();
+
+    helper.initDb();
   }
 
   @override
@@ -212,26 +213,44 @@ class _SingUpScreenState extends State<SingUpScreen> {
                     }
                   },
                 ),
-                const SizedBox(height: 30,),
-                SizedBox(
-                  height: 45,
-                  width: 250,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: const StadiumBorder(),
+                const SizedBox(height: 10,),
+                TextButton(
+                  onPressed: (){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const LoginScreen())
+                    );
+                  }, 
+                  child: const Text(
+                    "Already have an account? Login",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400, 
                     ),
-                    onPressed: () async {
-                      addUser();
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => Wallet(users: _users,))
-                      );
-                    }, 
-                    child: const Text(
-                      "finalize registration", 
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+                  child: SizedBox(
+                    height: 45,
+                    width: 250,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: const StadiumBorder(),
+                      ),
+                      onPressed: () async {
+                        addUser();
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const Wallet())
+                        );
+                      }, 
+                      child: const Text(
+                        "finalize registration", 
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                   ),
@@ -261,6 +280,6 @@ class _SingUpScreenState extends State<SingUpScreen> {
       country: countryController.text,
     );
     await helper.saveUser(users);
-    print(users);
+    print(users.toString());
   }
 }

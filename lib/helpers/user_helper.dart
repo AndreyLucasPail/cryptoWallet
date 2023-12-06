@@ -98,7 +98,7 @@ class UserHelper{
     );
   }
 
-  Future<List> getAllUsers() async {
+  Future<List<Users>> getAllUsers() async {
     Database? dbUser = await db;
 
     List listMap = await dbUser!.rawQuery("SELECT * FROM $userTable");
@@ -107,6 +107,11 @@ class UserHelper{
       listUsers.add(Users.fromMap(m));
     }
     return listUsers;
+  }
+
+  Future deleteDB() async { 
+    Database? dbUser = await db;
+    dbUser!.delete(userTable);
   }
 
   Future close() async {
@@ -133,19 +138,19 @@ class Users {
     required this.country,}
   );
 
-  int? id = 0;
-  String username = "";
-  String phone = "";
-  String email = "";
-  String confirmEmail = "";
-  String img = "";
-  String address = "";
-  String birthday = "";
-  String password = "";
-  String confirmPassword = "";
-  String city = "";
-  String state = "";
-  String country = "";
+  int? id;
+  String username;
+  String phone;
+  String email;
+  String confirmEmail;
+  String img;
+  String address;
+  String birthday;
+  String password;
+  String confirmPassword;
+  String city;
+  String state;
+  String country;
 
   factory Users.fromMap(Map<String, dynamic> map){
     return Users(
@@ -184,7 +189,7 @@ class Users {
 
   @override
   String toString() {
-    return "Contact(id: $id, name: $username, email: $email, confirmemail: $confirmEmail, phone: $phone, img: $img, address: $address,"
+    return "Users(id: $id, name: $username, email: $email, confirmemail: $confirmEmail, phone: $phone, img: $img, address: $address,"
     "birthday: $birthday, password: $password, city: $city, state: $state, country: $country)";
   }
 
