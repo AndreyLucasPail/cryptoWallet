@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import '../helpers/user_helper.dart';
 
 class SingUpScreen extends StatefulWidget {
-  const SingUpScreen({super.key, this.users,});
-
-  final Users? users;
+  const SingUpScreen({super.key,});
 
   @override
   State<SingUpScreen> createState() => _SingUpScreenState();
@@ -26,6 +24,16 @@ class _SingUpScreenState extends State<SingUpScreen> {
   final cityController = TextEditingController();
   final stateController = TextEditingController();
   final countryController = TextEditingController();
+  final birthdayController =TextEditingController();
+
+  Users? _users;
+  List<Users> userList = [];
+  UserHelper helper = UserHelper();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +97,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                   prefix: const Icon(Icons.phone),
                   obscure: false,
                   hint: "(11)95555-6987",
+                  keyboardtype: TextInputType.phone,
                 ),
                 const SizedBox(height: 10,),
                 CustomTextFild(
@@ -128,11 +137,28 @@ class _SingUpScreenState extends State<SingUpScreen> {
                   prefix: const Icon(Icons.home),
                 ),
                 const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: cityController,
-                  hint: "City",
-                  obscure: false,
-                  prefix: const Icon(Icons.home),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 173,
+                      child: CustomTextFild(
+                        textController: birthdayController,
+                        hint: "01/01/2023",
+                        obscure: false,
+                        prefix: const Icon(Icons.cake_rounded),                      
+                      ),
+                    ),
+                    const SizedBox(width: 14,),
+                    SizedBox(
+                      width: 173,
+                      child: CustomTextFild(
+                        textController: cityController,
+                        hint: "City",
+                        obscure: false,
+                        prefix: const Icon(CupertinoIcons.globe),                      
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10,),
                 Row(
@@ -162,7 +188,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                 CustomTextFild(
                   textController: passwordController,
                   hint: "Password",
-                  obscure: false,
+                  obscure: true,
                   prefix: const Icon(Icons.lock),
                   validator: (text){
                     if(text!.isEmpty || text.length < 6){
@@ -176,7 +202,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                 CustomTextFild(
                   textController: confirmPasswordController,
                   hint: "Confirm password",
-                  obscure: false,
+                  obscure: true,
                   prefix: const Icon(Icons.lock),
                   validator: (text){
                     if(text!.isEmpty || passwordController.text.length != confirmPasswordController.text.length){
@@ -195,9 +221,10 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       backgroundColor: Colors.white,
                       shape: const StadiumBorder(),
                     ),
-                    onPressed: (){
+                    onPressed: () async {
+                      addUser();
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => const Wallet())
+                        MaterialPageRoute(builder: (context) => Wallet(users: _users,))
                       );
                     }, 
                     child: const Text(
@@ -216,5 +243,24 @@ class _SingUpScreenState extends State<SingUpScreen> {
         ),
       ),
     );
+  }
+
+  void addUser() async {
+    Users users = Users(
+      username: nameController.text,
+      phone: phoneController.text, 
+      email: emailController.text,
+      confirmEmail: confirmEmailController.text,
+      img: "assets/homem.png",
+      address: addressController.text,
+      birthday: birthdayController.text,
+      password: passwordController.text,
+      confirmPassword: confirmPasswordController.text,
+      city: cityController.text,
+      state: stateController.text,
+      country: countryController.text,
+    );
+    await helper.saveUser(users);
+    print(users);
   }
 }

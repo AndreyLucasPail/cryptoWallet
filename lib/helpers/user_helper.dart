@@ -41,22 +41,22 @@ class UserHelper{
 
     return await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
       await db.execute("CREATE TABLE $userTable($idColumn INTEGER PRIMARY KEY, $usernameColumn TEXT, $emailColumn TEXT,"
-      "$phoneColumn TEXT, $imgColumn TEXT, $addressColumn TEXT, $birthdayColumn TEXT, $confirmEmailColumn TEXT"
+      "$phoneColumn TEXT, $imgColumn TEXT, $addressColumn TEXT, $birthdayColumn TEXT, $confirmEmailColumn TEXT,"
       "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColunm TEXT, $stateColunm TEXT, $countryColunm TEXT)"
       );
     },); 
   }
 
-  //Recebe e salva o contato
+  //Recebe e salva o usuario
   Future<Users> saveUser(Users users) async {
     Database? dbUser = await db;//obtêm o banco de dados
-    users.id = await dbUser!.insert(userTable, users.toMap());//insere um contato na tabela userTable
+    users.id = await dbUser!.insert(userTable, users.toMap());//insere um usuario na tabela userTable
     return users;
   }
 
   Future<Users?> getUsers(int id) async {
     Database? dbUser = await db;
-    List<Map> maps = await dbUser!.query(
+    List<Map<String, dynamic>> maps = await dbUser!.query(
       userTable,
       columns: [
         idColumn,
@@ -103,7 +103,7 @@ class UserHelper{
 
     List listMap = await dbUser!.rawQuery("SELECT * FROM $userTable");
     List<Users> listUsers = [];
-    for(Map m in listMap){
+    for(Map<String, dynamic> m in listMap){
       listUsers.add(Users.fromMap(m));
     }
     return listUsers;
@@ -117,40 +117,56 @@ class UserHelper{
 }
 
 class Users {
-  Users();
+  Users(
+    {this.id,
+    required this.username,
+    required this.phone,
+    required this.email,
+    required this.confirmEmail,
+    required this.img,
+    required this.address,
+    required this.birthday,
+    required this.password,
+    required this.confirmPassword,
+    required this.city,
+    required this.state,
+    required this.country,}
+  );
 
-  int? id;
-  String? username;
-  String? phone;
-  String? email;
-  String? confirmEmail;
-  String? img;
-  String? address;
-  String? birthday;
-  String? password;
-  String? confirmPassword;
-  String? city;
-  String? state;
-  String? country;
+  int? id = 0;
+  String username = "";
+  String phone = "";
+  String email = "";
+  String confirmEmail = "";
+  String img = "";
+  String address = "";
+  String birthday = "";
+  String password = "";
+  String confirmPassword = "";
+  String city = "";
+  String state = "";
+  String country = "";
 
-  Users.fromMap(Map map){
-    id = map[idColumn];
-    username = map[usernameColumn];
-    phone = map[phoneColumn];
-    email = map[emailColumn];
-    confirmEmail = map[confirmEmail];
-    img = map[imgColumn];
-    address = map[addressColumn];
-    birthday = map[birthdayColumn];
-    password = map[passwordColumn];
-    confirmPassword = map[confirmPassword];
-    city = map[cityColunm];
-    state = map[stateColunm];
-    country = map[countryColunm];
+  factory Users.fromMap(Map<String, dynamic> map){
+    return Users(
+      id: map[idColumn],
+      username: map[usernameColumn],
+      phone: map[phoneColumn],
+      email: map[emailColumn],
+      confirmEmail: map[confirmEmailColumn],
+      img: map[imgColumn],
+      address: map[addressColumn],
+      birthday: map[birthdayColumn],
+      password: map[passwordColumn],
+      confirmPassword: map[confirmPasswordColumn],
+      city: map[cityColunm],
+      state: map[stateColunm],
+      country: map[countryColunm],
+    );
   }
 
   Map<String,dynamic> toMap() {
-    Map<String, dynamic> map = {
+    return {
       usernameColumn: username,
       phoneColumn: phone,
       emailColumn: email,
@@ -164,10 +180,12 @@ class Users {
       stateColunm: state,
       countryColunm: country,
     };
-    if(id != null) {
-      map[idColumn] = id;
-    }
-    return map;
+  }
+
+  @override
+  String toString() {
+    return "Contact(id: $id, name: $username, email: $email, confirmemail: $confirmEmail, phone: $phone, img: $img, address: $address,"
+    "birthday: $birthday, password: $password, city: $city, state: $state, country: $country)";
   }
 
 }

@@ -1,10 +1,13 @@
+import 'package:crypto_teste/helpers/user_helper.dart';
 import 'package:crypto_teste/screens/login_screen.dart';
 import 'package:crypto_teste/screens/wallet_card_screen.dart';
 import 'package:crypto_teste/screens/wallet_my_account_screen.dart';
 import 'package:flutter/material.dart';
 
 class Wallet extends StatefulWidget {
-  const Wallet({super.key});
+  const Wallet({super.key, this.users});
+
+  final Users? users;
 
   @override
   State<Wallet> createState() => _WalletState();

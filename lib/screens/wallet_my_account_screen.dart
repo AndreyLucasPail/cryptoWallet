@@ -1,15 +1,21 @@
+import 'package:crypto_teste/helpers/user_helper.dart';
 import 'package:crypto_teste/widgets/user_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyAccountScreen extends StatefulWidget {
-  const MyAccountScreen({super.key});
+  const MyAccountScreen({super.key, });
 
   @override
   State<MyAccountScreen> createState() => _MyAccountScreenState();
 }
 
 class _MyAccountScreenState extends State<MyAccountScreen> {
+
+  UserHelper helper = UserHelper();
+
+  List<Users> user = [];
+
   @override
   Widget build(BuildContext context) {
     return ListView(
