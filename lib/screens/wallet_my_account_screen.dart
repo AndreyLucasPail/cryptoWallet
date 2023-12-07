@@ -28,15 +28,15 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     return FutureBuilder<List<Users>>(
       future: helper.getAllUsers(),
       builder: (context, snapshot) {
-        if(!snapshot.hasData){
+        if(snapshot.connectionState == ConnectionState.waiting){
           return const Center(
             child: CircularProgressIndicator(),
           );
         }else if(snapshot.hasError){
-          return const Center(
+          return Center(
             child: Text(
-              "ERROR!!",
-              style: TextStyle(color: Colors.red, fontSize: 25),
+              "ERROR: ${snapshot.error}",
+              style: const TextStyle(color: Colors.red, fontSize: 25),
             ),
           );
         }else{

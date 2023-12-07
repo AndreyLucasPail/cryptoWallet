@@ -16,7 +16,7 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   
   int? page = 1;
-
+  UserHelper helper = UserHelper();
 
   @override
   void initState() {
@@ -72,7 +72,9 @@ class _WalletState extends State<Wallet> {
           ),
           actions: [
             IconButton(
-              onPressed: (){}, 
+              onPressed: (){
+                helper.deleteDB();
+              }, 
               icon: const Icon(Icons.notifications, size: 30,)
             ),
           ],

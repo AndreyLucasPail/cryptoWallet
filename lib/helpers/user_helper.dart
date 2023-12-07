@@ -39,12 +39,27 @@ class UserHelper{
     final databasePath = await getDatabasesPath();
     final path = p.join(databasePath, "usersnew.db");
 
-    return await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
-      await db.execute("CREATE TABLE $userTable($idColumn INTEGER PRIMARY KEY, $usernameColumn TEXT, $emailColumn TEXT,"
-      "$phoneColumn TEXT, $imgColumn TEXT, $addressColumn TEXT, $birthdayColumn TEXT, $confirmEmailColumn TEXT,"
-      "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColunm TEXT, $stateColunm TEXT, $countryColunm TEXT)"
-      );
-    },); 
+    // Verificar se o banco de dados já existe
+    final dbExists = await databaseExists(path);
+
+    if(!dbExists){
+      return await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
+        await db.execute("CREATE TABLE $userTable($idColumn INTEGER PRIMARY KEY, $usernameColumn TEXT, $emailColumn TEXT,"
+        "$phoneColumn TEXT, $imgColumn TEXT, $addressColumn TEXT, $birthdayColumn TEXT, $confirmEmailColumn TEXT,"
+        "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColunm TEXT, $stateColunm TEXT, $countryColunm TEXT)"
+        );
+
+        // Marcar o banco de dados como existente
+        await db.execute("CREATE TABLE IF NOT EXISTS app_metadata (key TEXT, value TEXT)");
+        await db.execute("INSERT INTO app_metadata (key, value) VALUES ('database_exists', 'true')");
+      }); 
+    }else{
+      return await openDatabase(path, version: 1);
+    }
+  }
+
+  Future<bool> databaseExists(String path) async {
+    return databaseFactory.databaseExists(path);
   }
 
   //Recebe e salva o usuario
