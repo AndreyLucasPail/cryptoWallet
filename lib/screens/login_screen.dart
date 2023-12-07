@@ -49,6 +49,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 50),
                   CustomTextFild(
+                    labalText: "E-mail",
                     textController: emailController,
                     obscure: false,
                     hint: "E-mail",
@@ -57,6 +58,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20,),
                   CustomTextFild(
+                    labalText: "password",
                     textController: passwordController,
                     obscure: true,
                     hint: "Password",

@@ -29,6 +29,8 @@ class _SingUpScreenState extends State<SingUpScreen> {
 
   UserHelper helper = UserHelper();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -74,194 +76,271 @@ class _SingUpScreenState extends State<SingUpScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: ListView(
             children:[ 
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    height: 100,
+                    width: 100,
+                    child: Image.asset("assets/eleitor.png"),
                   ),
-                  height: 100,
-                  width: 100,
-                  child: Image.asset("assets/eleitor.png"),
-                ),
-                const SizedBox(height: 18,),
-                CustomTextFild(
-                  textController: nameController,
-                  prefix: const Icon(Icons.person),
-                  obscure: false,
-                  hint: "User Name",
-                ),
-                const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: phoneController,
-                  prefix: const Icon(Icons.phone),
-                  obscure: false,
-                  hint: "(11)95555-6987",
-                  keyboardtype: TextInputType.phone,
-                ),
-                const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: emailController,
-                  keyboardtype: TextInputType.emailAddress,
-                  prefix: const Icon(Icons.email),
-                  obscure: false,
-                  hint: "user@user.com",
-                  validator: (text) {
-                    if(text!.isEmpty || !text.contains("@")){
-                      return "E-mail invalid";
-                    }else{
-                      return "";
-                    }
-                  },
-                ),
-                const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: confirmEmailController,
-                  keyboardtype: TextInputType.emailAddress,
-                  prefix: const Icon(Icons.email),
-                  obscure: false,
-                  hint: "Confirm Email",
-                  validator: (text) {
-                    if(text!.isEmpty || confirmPasswordController.text != emailController.text){
-                      return "E-mail invalid";
-                    }else{
-                      return "";
-                    }
-                  },
-                ),
-                const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: addressController,
-                  hint: "Address",
-                  obscure: false,
-                  prefix: const Icon(Icons.home),
-                ),
-                const SizedBox(height: 10,),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 173,
-                      child: CustomTextFild(
-                        textController: birthdayController,
-                        hint: "01/01/2023",
-                        obscure: false,
-                        prefix: const Icon(Icons.cake_rounded),                      
+                  const SizedBox(height: 18,),
+                  CustomTextFild(
+                    labalText: "User",
+                    textController: nameController,
+                    prefix: const Icon(Icons.person),
+                    obscure: false,
+                    hint: "User Name",
+                    validator: validateName
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextFild(
+                    labalText: "Phone",
+                    textController: phoneController,
+                    prefix: const Icon(Icons.phone),
+                    obscure: false,
+                    hint: "(11)95555-6987",
+                    keyboardtype: TextInputType.phone,
+                    validator: validatePhone
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextFild(
+                    labalText: "E-mail",
+                    textController: emailController,
+                    keyboardtype: TextInputType.emailAddress,
+                    prefix: const Icon(Icons.email),
+                    obscure: false,
+                    hint: "user@user.com",
+                    validator: validateEmail
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextFild(
+                    labalText: "Confirm Email",
+                    textController: confirmEmailController,
+                    keyboardtype: TextInputType.emailAddress,
+                    prefix: const Icon(Icons.email),
+                    obscure: false,
+                    hint: "Confirm Email",
+                    validator: validateConfirmEmail
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextFild(
+                    labalText: "Address",
+                    textController: addressController,
+                    hint: "Address",
+                    obscure: false,
+                    prefix: const Icon(Icons.home),
+                    validator: validateAddress
+                  ),
+                  const SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 173,
+                        child: CustomTextFild(
+                          labalText: "Birthday",
+                          textController: birthdayController,
+                          hint: "01/01/2023",
+                          obscure: false,
+                          prefix: const Icon(Icons.cake_rounded),  
+                          validator: validateBirthday 
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 14,),
-                    SizedBox(
-                      width: 173,
-                      child: CustomTextFild(
-                        textController: cityController,
-                        hint: "City",
-                        obscure: false,
-                        prefix: const Icon(CupertinoIcons.globe),                      
+                      const SizedBox(width: 14,),
+                      SizedBox(
+                        width: 173,
+                        child: CustomTextFild(
+                          labalText: "City",
+                          textController: cityController,
+                          hint: "New York",
+                          obscure: false,
+                          prefix: const Icon(CupertinoIcons.globe), 
+                          validator: validateCity                     
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10,),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 173,
-                      child: CustomTextFild(
-                        textController: stateController,
-                        hint: "State",
-                        obscure: false,
-                        prefix: const Icon(CupertinoIcons.globe),                      
+                    ],
+                  ),
+                  const SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 173,
+                        child: CustomTextFild(
+                          labalText: "State",
+                          textController: stateController,
+                          hint: "NY",
+                          obscure: false,
+                          prefix: const Icon(CupertinoIcons.globe), 
+                          validator: validateState,                     
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 14,),
-                    SizedBox(
-                      width: 173,
-                      child: CustomTextFild(
-                        textController: countryController,
-                        hint: "Country",
-                        obscure: false,
-                        prefix: const Icon(CupertinoIcons.globe),                      
+                      const SizedBox(width: 14,),
+                      SizedBox(
+                        width: 173,
+                        child: CustomTextFild(
+                          labalText: "Country",
+                          textController: countryController,
+                          hint: "USA",
+                          obscure: false,
+                          prefix: const Icon(CupertinoIcons.globe),
+                          validator: validateCountry,                      
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: passwordController,
-                  hint: "Password",
-                  obscure: true,
-                  prefix: const Icon(Icons.lock),
-                  validator: (text){
-                    if(text!.isEmpty || text.length < 6){
-                      return "Ivalid password";
-                    } else {
-                      return "";
-                    }
-                  },
-                ),
-                const SizedBox(height: 10,),
-                CustomTextFild(
-                  textController: confirmPasswordController,
-                  hint: "Confirm password",
-                  obscure: true,
-                  prefix: const Icon(Icons.lock),
-                  validator: (text){
-                    if(text!.isEmpty || passwordController.text.length != confirmPasswordController.text.length){
-                      return "Ivalid password";
-                    } else {
-                      return "";
-                    }
-                  },
-                ),
-                const SizedBox(height: 10,),
-                TextButton(
-                  onPressed: (){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const LoginScreen())
-                    );
-                  }, 
-                  child: const Text(
-                    "Already have an account? Login",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400, 
+                    ],
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextFild(
+                    labalText: "Password",
+                    textController: passwordController,
+                    hint: "Password",
+                    obscure: true,
+                    prefix: const Icon(Icons.lock),
+                    validator: validatePassword,
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextFild(
+                    labalText: "Confirm password",
+                    textController: confirmPasswordController,
+                    hint: "Confirm password",
+                    obscure: true,
+                    prefix: const Icon(Icons.lock),
+                    validator: validateConfirmPassword,
+                  ),
+                  const SizedBox(height: 10,),
+                  TextButton(
+                    onPressed: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const LoginScreen())
+                      );
+                    }, 
+                    child: const Text(
+                      "Already have an account? Login",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400, 
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
-                  child: SizedBox(
-                    height: 45,
-                    width: 250,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: const StadiumBorder(),
-                      ),
-                      onPressed: () async {
-                        addUser();
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => const Wallet())
-                        );
-                      }, 
-                      child: const Text(
-                        "finalize registration", 
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+                    child: SizedBox(
+                      height: 45,
+                      width: 250,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: const StadiumBorder(),
+                        ),
+                        onPressed: () async {
+                          if(_formKey.currentState!.validate()){
+                            addUser();
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => const Wallet())
+                            );
+                          }
+                        }, 
+                        child: const Text(
+                          "finalize registration", 
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ]
           ),
         ),
       ),
     );
+  }
+
+  
+  String? validateName(String? text) {
+    if (text == null || text.isEmpty) {
+      return "Please enter some text";
+    }
+    return null;
+  }
+
+  String? validatePhone(String? text) {
+    if (text == null || text.isEmpty) {
+      return "enter your phone number";
+    }
+    return null;
+  }
+
+  String? validateEmail(String? text) {
+    if (text == null || text.isEmpty || !text.contains("@")) {
+      return "E-mail invalid";
+    }
+    return null;
+  }
+
+  String? validateConfirmEmail(String? text) {
+    if (text == null || text.isEmpty || emailController.text != text) {
+      return "E-mail does not match";
+    }
+    return null;
+  }
+
+  String? validateAddress(String? text) {
+    if (text == null || text.isEmpty) {
+      return "enter your address";
+    }
+    return null;
+  }
+
+  String? validateBirthday(String? text) {
+    if (text == null || text.isEmpty) {
+      return "enter your birth date";
+    }
+    return null;
+  }
+
+  String? validateCity(String? text) {
+    if (text == null || text.isEmpty) {
+      return "enter your city";
+    }
+    return null;
+  }
+
+  String? validateState(String? text) {
+    if (text == null || text.isEmpty) {
+      return "enter your state";
+    }
+    return null;
+  }
+
+  String? validateCountry(String? text) {
+    if (text == null || text.isEmpty) {
+      return "enter your country";
+    }
+    return null;
+  }
+
+  String? validatePassword(String? text) {
+    if (text == null || text.isEmpty || text.length < 6) {
+      return "Invalid password";
+    }
+    return null;
+  }
+
+  String? validateConfirmPassword(String? text) {
+    if (text == null || text.isEmpty || passwordController.text != confirmPasswordController.text) {
+      return "Passwords do not match";
+    }
+    return null;
   }
 
   void addUser() async {
@@ -280,6 +359,5 @@ class _SingUpScreenState extends State<SingUpScreen> {
       country: countryController.text,
     );
     await helper.saveUser(users);
-    print(users.toString());
   }
 }
