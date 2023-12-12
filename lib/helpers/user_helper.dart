@@ -15,6 +15,7 @@ String passwordColumn = "passwordColumn";
 String cityColunm = "cityColumn";
 String stateColunm = "stateColumn";
 String countryColunm = "countryColumn";
+String loggedInColunm = "loggedInColunm"; 
 
 
 class UserHelper{
@@ -46,7 +47,8 @@ class UserHelper{
       return await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
         await db.execute("CREATE TABLE $userTable($idColumn INTEGER PRIMARY KEY, $usernameColumn TEXT, $emailColumn TEXT,"
         "$phoneColumn TEXT, $imgColumn TEXT, $addressColumn TEXT, $birthdayColumn TEXT, $confirmEmailColumn TEXT,"
-        "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColunm TEXT, $stateColunm TEXT, $countryColunm TEXT)"
+        "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColunm TEXT, $stateColunm TEXT, $countryColunm TEXT,"
+        "$loggedInColunm INTEGER DEFALT 0)"
         );
 
         // Marcar o banco de dados como existente
@@ -69,7 +71,7 @@ class UserHelper{
     return users;
   }
 
-  Future<Users?> getUsers(int id) async {
+  Future<Users?> getUsers(int? id) async {
     Database? dbUser = await db;
     List<Map<String, dynamic>> maps = await dbUser!.query(
       userTable,
@@ -123,7 +125,73 @@ class UserHelper{
     }
     return listUsers;
   }
+
+  Future<Users?> getLoggedUser() async {
+    Database? dbUser = await db;
+
+    List<Map<String, dynamic>> map = await dbUser!.query(
+      userTable,
+      columns: [
+        idColumn,
+        loggedInColunm,
+        usernameColumn,
+        emailColumn,
+        confirmEmailColumn,
+        phoneColumn,
+        imgColumn,
+        addressColumn,
+        birthdayColumn,
+        passwordColumn,
+        confirmPasswordColumn,
+        cityColunm,
+        stateColunm,
+        countryColunm, 
+      ],
+      where: "$loggedInColunm = ?",
+      whereArgs: [1],
+    );
+
+    if(map.isNotEmpty){
+      return Users.fromMap(map.first);
+    }else{
+      return null;
+    }
+  }
   
+  Future<bool> loginUser(String email, String password) async{
+    Database? dbUser = await db;
+
+    List<Map<String, dynamic>> maps = await dbUser!.query(
+      userTable,
+      columns: [
+        idColumn,
+        usernameColumn,
+        passwordColumn,
+        loggedInColunm,
+      ],
+      where: "$usernameColumn = ? AND $passwordColumn = ?",
+      whereArgs: [usernameColumn, passwordColumn]
+    );
+
+    if(maps.isNotEmpty){
+      Users users = Users.fromMap(maps.first);
+      users.loggedIn = 1;
+      await updateUser(users);
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  Future<void> logoutUser(int? userId) async {
+    Users? users = await getUsers(userId);
+
+    if(users != null){
+      users.loggedIn = 0;
+      await updateUser(users);
+    }
+  }
+
   Future deleteDB() async { 
     Database? dbUser = await db;
     dbUser!.delete(userTable);
@@ -139,6 +207,7 @@ class UserHelper{
 class Users {
   Users(
     {this.id,
+    this.loggedIn,
     required this.username,
     required this.phone,
     required this.email,
@@ -154,6 +223,7 @@ class Users {
   );
 
   int? id;
+  int? loggedIn;
   String username;
   String phone;
   String email;
@@ -170,6 +240,7 @@ class Users {
   factory Users.fromMap(Map<String, dynamic> map){
     return Users(
       id: map[idColumn],
+      loggedIn: map[loggedInColunm],
       username: map[usernameColumn],
       phone: map[phoneColumn],
       email: map[emailColumn],
@@ -199,13 +270,14 @@ class Users {
       cityColunm: city,
       stateColunm: state,
       countryColunm: country,
+      loggedInColunm:loggedIn,
     };
   }
 
   @override
   String toString() {
     return "Users(id: $id, name: $username, email: $email, confirmemail: $confirmEmail, phone: $phone, img: $img, address: $address,"
-    "birthday: $birthday, password: $password, city: $city, state: $state, country: $country)";
+    "birthday: $birthday, password: $password, city: $city, state: $state, country: $country, logged: $loggedIn)";
   }
 
 }

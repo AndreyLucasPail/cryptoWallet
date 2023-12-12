@@ -1,17 +1,28 @@
+import 'package:crypto_teste/helpers/user_helper.dart';
 import 'package:crypto_teste/screens/singup_screen.dart';
 import 'package:crypto_teste/screens/wallet_screen.dart';
 import 'package:crypto_teste/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, this.emailController, this.passwordController});
 
   final TextEditingController? emailController;
   final TextEditingController? passwordController;
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  UserHelper helper = UserHelper();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       body: Container(
         decoration: const BoxDecoration(
@@ -50,7 +61,7 @@ class LoginScreen extends StatelessWidget {
                   const SizedBox(height: 50),
                   CustomTextFild(
                     labalText: "E-mail",
-                    textController: emailController,
+                    textController: widget.emailController,
                     obscure: false,
                     hint: "E-mail",
                     prefix: const Icon(Icons.account_circle),
@@ -59,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                   const SizedBox(height: 20,),
                   CustomTextFild(
                     labalText: "password",
-                    textController: passwordController,
+                    textController: widget.passwordController,
                     obscure: true,
                     hint: "Password",
                     prefix: const Icon(Icons.lock),
@@ -73,10 +84,24 @@ class LoginScreen extends StatelessWidget {
                         backgroundColor: Colors.white,
                         shape: const StadiumBorder()
                       ),
-                      onPressed: () {
-                          Navigator.of(context).pushReplacement(
+                      onPressed: () async {
+                        String email = widget.emailController!.text;
+                        String password = widget.passwordController!.text;
+
+                        bool loginSuccess = await helper.loginUser(email, password);
+                        print(loginSuccess);
+
+                        if(loginSuccess){
+                          Navigator.of(_scaffoldKey.currentContext!).pushReplacement(
                             MaterialPageRoute(builder: (context) => const Wallet())
                           );
+                        }else{
+                           ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+                            const SnackBar(
+                              content: Text("Login failed. Please check your credentials or create a account."),
+                            ),
+                          );
+                        }
                       },
                       child: const Text(
                         "Sing in",

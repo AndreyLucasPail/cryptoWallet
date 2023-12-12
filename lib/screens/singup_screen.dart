@@ -130,6 +130,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                   ),
                   const SizedBox(height: 10,),
                   CustomTextFild(
+                    keyboardtype: TextInputType.streetAddress,
                     labalText: "Address",
                     textController: addressController,
                     hint: "Address",
@@ -143,12 +144,13 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       SizedBox(
                         width: 173,
                         child: CustomTextFild(
+                          keyboardtype: TextInputType.number,
                           labalText: "Birthday",
                           textController: birthdayController,
                           hint: "01/01/2023",
                           obscure: false,
                           prefix: const Icon(Icons.cake_rounded),  
-                          validator: validateBirthday 
+                          validator: validateBirthday,
                         ),
                       ),
                       const SizedBox(width: 14,),

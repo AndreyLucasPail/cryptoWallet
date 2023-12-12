@@ -27,7 +27,9 @@ class _WalletState extends State<Wallet> {
   @override
   Widget build(BuildContext context) {
 
-      PageController? pageController = PageController();
+    PageController? pageController = PageController();
+
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Container(
       decoration: const BoxDecoration(
@@ -41,6 +43,7 @@ class _WalletState extends State<Wallet> {
         ),
       ),
       child: Scaffold(
+        key: scaffoldKey,
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -73,7 +76,6 @@ class _WalletState extends State<Wallet> {
           actions: [
             IconButton(
               onPressed: (){
-                helper.deleteDB();
               }, 
               icon: const Icon(Icons.notifications, size: 30,)
             ),
@@ -81,8 +83,14 @@ class _WalletState extends State<Wallet> {
           leading: Builder(
             builder: (context) {
               return IconButton(
-                onPressed: (){
-                  Navigator.of(context).pushReplacement(
+                onPressed: () async {
+                  Users? loggedUser = await helper.getLoggedUser();
+
+                  int? userId = loggedUser!.id;
+                  print("UserID: $userId");
+
+                  helper.logoutUser(userId);
+                  Navigator.of(scaffoldKey.currentContext!).pushReplacement(
                     MaterialPageRoute(builder: (context) => const LoginScreen())
                   );
                 }, 
