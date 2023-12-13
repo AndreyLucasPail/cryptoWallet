@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 
@@ -12,10 +13,10 @@ String birthdayColumn = "birthdayColumn";
 String confirmEmailColumn = "confirmEmailColumn";
 String confirmPasswordColumn = "confirmPasswordColumn";
 String passwordColumn = "passwordColumn";
-String cityColunm = "cityColumn";
-String stateColunm = "stateColumn";
-String countryColunm = "countryColumn";
-String loggedInColunm = "loggedInColunm"; 
+String cityColumn = "cityColumn";
+String stateColumn = "stateColumn";
+String countryColumn = "countryColumn";
+String loggedInColumn = "loggedInColumn"; 
 
 
 class UserHelper{
@@ -47,8 +48,8 @@ class UserHelper{
       return await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
         await db.execute("CREATE TABLE $userTable($idColumn INTEGER PRIMARY KEY, $usernameColumn TEXT, $emailColumn TEXT,"
         "$phoneColumn TEXT, $imgColumn TEXT, $addressColumn TEXT, $birthdayColumn TEXT, $confirmEmailColumn TEXT,"
-        "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColunm TEXT, $stateColunm TEXT, $countryColunm TEXT,"
-        "$loggedInColunm INTEGER DEFALT 0)"
+        "$confirmPasswordColumn TEXT, $passwordColumn TEXT, $cityColumn TEXT, $stateColumn TEXT, $countryColumn TEXT,"
+        "$loggedInColumn INTEGER DEFAULT 0)"
         );
 
         // Marcar o banco de dados como existente
@@ -77,6 +78,7 @@ class UserHelper{
       userTable,
       columns: [
         idColumn,
+        loggedInColumn,
         usernameColumn,
         emailColumn,
         confirmEmailColumn,
@@ -86,9 +88,9 @@ class UserHelper{
         birthdayColumn,
         passwordColumn,
         confirmPasswordColumn,
-        cityColunm,
-        stateColunm,
-        countryColunm,
+        cityColumn,
+        stateColumn,
+        countryColumn,
       ],
       where: "$idColumn = ?",
       whereArgs: [id],
@@ -127,32 +129,11 @@ class UserHelper{
   }
 
   Future<Users?> getLoggedUser() async {
-    Database? dbUser = await db;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt("userId");
 
-    List<Map<String, dynamic>> map = await dbUser!.query(
-      userTable,
-      columns: [
-        idColumn,
-        loggedInColunm,
-        usernameColumn,
-        emailColumn,
-        confirmEmailColumn,
-        phoneColumn,
-        imgColumn,
-        addressColumn,
-        birthdayColumn,
-        passwordColumn,
-        confirmPasswordColumn,
-        cityColunm,
-        stateColunm,
-        countryColunm, 
-      ],
-      where: "$loggedInColunm = ?",
-      whereArgs: [1],
-    );
-
-    if(map.isNotEmpty){
-      return Users.fromMap(map.first);
+    if(userId != null){
+      return getUsers(userId);
     }else{
       return null;
     }
@@ -165,18 +146,22 @@ class UserHelper{
       userTable,
       columns: [
         idColumn,
-        usernameColumn,
+        emailColumn,
         passwordColumn,
-        loggedInColunm,
+        loggedInColumn,
       ],
-      where: "$usernameColumn = ? AND $passwordColumn = ?",
-      whereArgs: [usernameColumn, passwordColumn]
+      where: "$emailColumn = ? AND $passwordColumn = ?",
+      whereArgs: [email, password]
     );
 
     if(maps.isNotEmpty){
       Users users = Users.fromMap(maps.first);
       users.loggedIn = 1;
       await updateUser(users);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt("userId", users.id!);
+
       return true;
     }else{
       return false;
@@ -184,12 +169,18 @@ class UserHelper{
   }
 
   Future<void> logoutUser(int? userId) async {
-    Users? users = await getUsers(userId);
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   int? userId = prefs.getInt("UserId");
 
+   if(userId != null){
+    Users? users = await getUsers(userId);
     if(users != null){
       users.loggedIn = 0;
       await updateUser(users);
     }
+
+    await prefs.remove("UserIs");
+   }
   }
 
   Future deleteDB() async { 
@@ -240,7 +231,7 @@ class Users {
   factory Users.fromMap(Map<String, dynamic> map){
     return Users(
       id: map[idColumn],
-      loggedIn: map[loggedInColunm],
+      loggedIn: map[loggedInColumn] ?? 0,
       username: map[usernameColumn],
       phone: map[phoneColumn],
       email: map[emailColumn],
@@ -250,9 +241,9 @@ class Users {
       birthday: map[birthdayColumn],
       password: map[passwordColumn],
       confirmPassword: map[confirmPasswordColumn],
-      city: map[cityColunm],
-      state: map[stateColunm],
-      country: map[countryColunm],
+      city: map[cityColumn],
+      state: map[stateColumn],
+      country: map[countryColumn],
     );
   }
 
@@ -267,10 +258,10 @@ class Users {
       birthdayColumn: birthday,
       passwordColumn: password,
       confirmPasswordColumn: confirmPassword,
-      cityColunm: city,
-      stateColunm: state,
-      countryColunm: country,
-      loggedInColunm:loggedIn,
+      cityColumn: city,
+      stateColumn: state,
+      countryColumn: country,
+      loggedInColumn:loggedIn,
     };
   }
 

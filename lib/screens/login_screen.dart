@@ -5,10 +5,7 @@ import 'package:crypto_teste/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, this.emailController, this.passwordController});
-
-  final TextEditingController? emailController;
-  final TextEditingController? passwordController;
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -18,6 +15,9 @@ class _LoginScreenState extends State<LoginScreen> {
   UserHelper helper = UserHelper();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 50),
                   CustomTextFild(
                     labalText: "E-mail",
-                    textController: widget.emailController,
+                    textController: emailController,
                     obscure: false,
                     hint: "E-mail",
                     prefix: const Icon(Icons.account_circle),
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20,),
                   CustomTextFild(
                     labalText: "password",
-                    textController: widget.passwordController,
+                    textController: passwordController,
                     obscure: true,
                     hint: "Password",
                     prefix: const Icon(Icons.lock),
@@ -85,11 +85,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: const StadiumBorder()
                       ),
                       onPressed: () async {
-                        String email = widget.emailController!.text;
-                        String password = widget.passwordController!.text;
+                        String email = emailController.text;
+                        String password = passwordController.text;
 
                         bool loginSuccess = await helper.loginUser(email, password);
-                        print(loginSuccess);
+                        print("email: $email");
+                        print("password: $password");
 
                         if(loginSuccess){
                           Navigator.of(_scaffoldKey.currentContext!).pushReplacement(
@@ -98,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }else{
                            ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
                             const SnackBar(
-                              content: Text("Login failed. Please check your credentials or create a account."),
+                              content: Text("Login failed. Please check your credentials or create an account."),
                             ),
                           );
                         }

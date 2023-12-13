@@ -24,10 +24,12 @@ class _WalletState extends State<Wallet> {
 
   }
 
+  bool isLoggedIn = false;
+
   @override
   Widget build(BuildContext context) {
 
-    PageController? pageController = PageController();
+    final pageController = PageController();
 
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -86,10 +88,16 @@ class _WalletState extends State<Wallet> {
                 onPressed: () async {
                   Users? loggedUser = await helper.getLoggedUser();
 
-                  int? userId = loggedUser!.id;
-                  print("UserID: $userId");
+                  if(loggedUser != null){
+                    int? userId = loggedUser.id;
+                    print("UserID: $userId");
 
-                  helper.logoutUser(userId);
+                    helper.logoutUser(userId);
+                    setState(() {
+                      isLoggedIn = false;
+                    });
+                  }
+
                   Navigator.of(scaffoldKey.currentContext!).pushReplacement(
                     MaterialPageRoute(builder: (context) => const LoginScreen())
                   );
