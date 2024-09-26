@@ -14,21 +14,18 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
-  
   int? page = 1;
   UserHelper helper = UserHelper();
 
   @override
   void initState() {
     super.initState();
-
   }
 
   bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
-
     final pageController = PageController();
 
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -36,13 +33,12 @@ class _WalletState extends State<Wallet> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255,0, 4, 40),
-            Color.fromARGB(255, 0, 78, 146)
-          ]
-        ),
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 0, 4, 40),
+              Color.fromARGB(255, 0, 78, 146)
+            ]),
       ),
       child: Scaffold(
         key: scaffoldKey,
@@ -50,8 +46,11 @@ class _WalletState extends State<Wallet> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 1, 57, 107),
+          iconTheme: const IconThemeData(color: Colors.white),
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(32),
+            ),
           ),
           elevation: 6,
           centerTitle: true,
@@ -61,26 +60,31 @@ class _WalletState extends State<Wallet> {
               Text(
                 "Wallet",
                 style: TextStyle(
+                  color: Colors.white,
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
               ),
-              SizedBox(height: 16,),
+              SizedBox(
+                height: 16,
+              ),
               Text(
                 "\$ 28,565,000",
                 style: TextStyle(
-                  fontSize: 30
+                  fontSize: 30,
+                  color: Colors.white,
                 ),
               ),
             ],
           ),
           actions: [
             IconButton(
-              onPressed: (){
-              }, 
-              icon: const Icon(Icons.notifications, size: 30,)
-            ),
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.notifications,
+                  size: 30,
+                )),
           ],
           leading: Builder(
             builder: (context) {
@@ -88,7 +92,7 @@ class _WalletState extends State<Wallet> {
                 onPressed: () async {
                   Users? loggedUser = await helper.getLoggedUser();
 
-                  if(loggedUser != null){
+                  if (loggedUser != null) {
                     int? userId = loggedUser.id;
                     print("UserID: $userId");
 
@@ -99,12 +103,17 @@ class _WalletState extends State<Wallet> {
                   }
 
                   Navigator.of(scaffoldKey.currentContext!).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const LoginScreen())
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
                   );
-                }, 
-                icon: const Icon(Icons.exit_to_app, size: 30,)
+                },
+                icon: const Icon(
+                  Icons.exit_to_app,
+                  size: 30,
+                ),
               );
-            }
+            },
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -115,22 +124,31 @@ class _WalletState extends State<Wallet> {
           currentIndex: page!,
           onTap: (value) {
             pageController.animateToPage(
-              value, 
-              duration: const Duration(milliseconds: 500), 
-              curve: Curves.ease
+              value,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.ease,
             );
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.white,),
+              icon: Icon(
+                Icons.home,
+                color: Colors.white,
+              ),
               label: "Market",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.wallet, color: Colors.white,),
+              icon: Icon(
+                Icons.wallet,
+                color: Colors.white,
+              ),
               label: "Wallet",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Colors.white,),
+              icon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
               label: "My account",
             ),
           ],
@@ -138,7 +156,7 @@ class _WalletState extends State<Wallet> {
         body: PageView(
           controller: pageController,
           children: [
-            const WalletCard(), 
+            const WalletCard(),
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -146,13 +164,13 @@ class _WalletState extends State<Wallet> {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.orange,
-                    Color.fromARGB(255, 0, 78, 146)
-                  ], 
+                    Color.fromARGB(255, 0, 78, 146),
+                  ],
                 ),
               ),
             ),
-            const MyAccountScreen(),   
-          ]
+            const MyAccountScreen(),
+          ],
         ),
       ),
     );
